@@ -22,25 +22,29 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+/* ================================================= */
+/* ROOT */
+/* ================================================= */
+
 :root{
 
-    --bg:#0A0A0B;
-    --surface:#121214;
-    --surface-2:#18181B;
+    --bg:#FFFDF8;
+    --surface:#FFFFFF;
+    --surface-2:#FFF6EA;
 
-    --border:#26262B;
+    --border:#FFD9B0;
 
     --primary:#FF7A00;
-    --primary-soft:#FF9A3C;
+    --primary-soft:#FFA64D;
 
     --positive:#22C55E;
     --neutral:#FACC15;
     --negative:#EF4444;
 
-    --text:#F5F5F5;
-    --muted:#A1A1AA;
+    --text:#1F1F1F;
+    --muted:#777777;
 
-    --shadow:0 12px 32px rgba(0,0,0,0.35);
+    --shadow:0 10px 30px rgba(255,122,0,0.10);
 
 }
 
@@ -53,10 +57,16 @@ body,
 .stApp{
 
     background:
-        radial-gradient(circle at top right,
-        rgba(255,122,0,0.10),
-        transparent 30%),
-        #0A0A0B;
+        radial-gradient(
+            circle at top right,
+            rgba(255,122,0,0.10),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            #FFFDF8 0%,
+            #FFF7EE 100%
+        );
 
     color:var(--text);
 
@@ -82,8 +92,8 @@ section[data-testid="stSidebar"]{
     background:
         linear-gradient(
             180deg,
-            #111113 0%,
-            #161618 100%
+            #FFFFFF 0%,
+            #FFF5E8 100%
         ) !important;
 
     border-right:1px solid var(--border);
@@ -94,7 +104,7 @@ section[data-testid="stSidebar"]{
 
 section[data-testid="stSidebar"] *:not(.material-icons){
 
-    color:#F4F4F5 !important;
+    color:#1F1F1F !important;
 
     font-family:'Manrope', sans-serif !important;
 }
@@ -124,9 +134,9 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     margin-bottom:30px;
 
     box-shadow:
-        0 18px 40px rgba(255,122,0,0.22);
+        0 18px 40px rgba(255,122,0,0.20);
 
-    border:1px solid rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.20);
 }
 
 .hero::before{
@@ -141,7 +151,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     width:220px;
     height:220px;
 
-    background:rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.10);
 
     border-radius:50%;
 }
@@ -158,7 +168,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     width:180px;
     height:180px;
 
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.08);
 
     border-radius:50%;
 }
@@ -212,7 +222,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     margin-top:10px;
     margin-bottom:18px;
 
-    color:white;
+    color:#1F1F1F;
 }
 
 /* ================================================= */
@@ -226,8 +236,8 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     background:
         linear-gradient(
             180deg,
-            rgba(255,255,255,0.02),
-            rgba(255,255,255,0.01)
+            rgba(255,255,255,1),
+            rgba(255,248,240,1)
         );
 
     border:1px solid var(--border);
@@ -252,8 +262,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     border-color:rgba(255,122,0,0.45);
 
     box-shadow:
-        0 20px 40px rgba(0,0,0,0.38),
-        0 0 0 1px rgba(255,122,0,0.18);
+        0 18px 34px rgba(255,122,0,0.14);
 }
 
 /* ================================================= */
@@ -268,7 +277,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
 
     text-transform:uppercase;
 
-    color:#8F8F97;
+    color:#A06C3A;
 
     margin-bottom:10px;
 
@@ -285,14 +294,14 @@ section[data-testid="stSidebar"] *:not(.material-icons){
 
     font-family:'Plus Jakarta Sans', sans-serif;
 
-    color:white;
+    color:#1F1F1F;
 }
 
 .metric-sub{
 
     margin-top:8px;
 
-    color:#8F8F97;
+    color:#777;
 
     font-size:13px;
 }
@@ -315,7 +324,7 @@ section[data-testid="stSidebar"] *:not(.material-icons){
         linear-gradient(
             135deg,
             #FF7A00 0%,
-            #FF9A3C 100%
+            #FFA64D 100%
         ) !important;
 
     color:white !important;
@@ -327,15 +336,12 @@ section[data-testid="stSidebar"] *:not(.material-icons){
     transition:0.25s !important;
 
     box-shadow:
-        0 10px 24px rgba(255,122,0,0.25);
+        0 10px 24px rgba(255,122,0,0.20);
 }
 
 .stButton > button:hover{
 
     transform:translateY(-2px);
-
-    box-shadow:
-        0 18px 34px rgba(255,122,0,0.34);
 
     background:
         linear-gradient(
@@ -343,6 +349,9 @@ section[data-testid="stSidebar"] *:not(.material-icons){
             #FF8C1A 0%,
             #FFB25E 100%
         ) !important;
+
+    box-shadow:
+        0 16px 28px rgba(255,122,0,0.25);
 }
 
 /* ================================================= */
@@ -352,11 +361,11 @@ section[data-testid="stSidebar"] *:not(.material-icons){
 .stTextArea textarea,
 .stTextInput input{
 
-    background:#131316 !important;
+    background:#FFFFFF !important;
 
-    color:#F4F4F5 !important;
+    color:#1F1F1F !important;
 
-    border:1px solid #2A2A30 !important;
+    border:1px solid #FFD9B0 !important;
 
     border-radius:18px !important;
 
@@ -382,9 +391,9 @@ section[data-testid="stSidebar"] *:not(.material-icons){
 
 div[data-baseweb="select"] > div{
 
-    background:#131316 !important;
+    background:#FFFFFF !important;
 
-    border:1px solid #2A2A30 !important;
+    border:1px solid #FFD9B0 !important;
 
     border-radius:14px !important;
 }
@@ -399,7 +408,7 @@ div[data-baseweb="select"] > div{
         linear-gradient(
             180deg,
             rgba(255,122,0,0.04),
-            rgba(255,255,255,0.01)
+            rgba(255,255,255,1)
         );
 
     border:2px dashed rgba(255,122,0,0.28);
@@ -432,14 +441,14 @@ button[data-baseweb="tab"]{
 
     font-weight:700 !important;
 
-    color:#7B7B84 !important;
+    color:#999 !important;
 
     transition:0.2s;
 }
 
 button[data-baseweb="tab"][aria-selected="true"]{
 
-    color:#FF8B24 !important;
+    color:#FF7A00 !important;
 
     border-bottom:3px solid #FF7A00 !important;
 }
@@ -469,25 +478,25 @@ button[data-baseweb="tab"][aria-selected="true"]{
 
     background:rgba(34,197,94,0.14);
 
-    color:#4ADE80;
+    color:#22C55E;
 
-    border:1px solid rgba(34,197,94,0.22);
+    border:1px solid rgba(34,197,94,0.20);
 }
 
 .badge-neutral{
 
-    background:rgba(250,204,21,0.14);
+    background:rgba(250,204,21,0.16);
 
-    color:#FACC15;
+    color:#D4A700;
 
-    border:1px solid rgba(250,204,21,0.22);
+    border:1px solid rgba(250,204,21,0.24);
 }
 
 .badge-negative{
 
     background:rgba(239,68,68,0.14);
 
-    color:#F87171;
+    color:#EF4444;
 
     border:1px solid rgba(239,68,68,0.22);
 }
@@ -498,7 +507,7 @@ button[data-baseweb="tab"][aria-selected="true"]{
 
 .stProgress > div > div{
 
-    background:#1B1B20 !important;
+    background:#FFE9D1 !important;
 }
 
 .stProgress > div > div > div{
@@ -521,7 +530,7 @@ button[data-baseweb="tab"][aria-selected="true"]{
 
     height:10px;
 
-    background:#242428;
+    background:#FFE9D1;
 
     border-radius:999px;
 
@@ -538,14 +547,18 @@ button[data-baseweb="tab"][aria-selected="true"]{
 }
 
 /* ================================================= */
-/* INFO */
+/* ALERT */
 /* ================================================= */
 
 .stAlert{
 
     border-radius:18px !important;
 
-    border:1px solid #2A2A30 !important;
+    border:1px solid #FFD9B0 !important;
+
+    background:#FFF9F2 !important;
+
+    color:#1F1F1F !important;
 }
 
 /* ================================================= */
@@ -556,7 +569,7 @@ button[data-baseweb="tab"][aria-selected="true"]{
 
     border:none;
 
-    border-top:1px solid #232327;
+    border-top:1px solid #FFE1BF;
 
     margin:28px 0;
 }
@@ -572,12 +585,12 @@ button[data-baseweb="tab"][aria-selected="true"]{
 
 ::-webkit-scrollbar-track{
 
-    background:#111113;
+    background:#FFF5EA;
 }
 
 ::-webkit-scrollbar-thumb{
 
-    background:#2D2D33;
+    background:#FFB46A;
 
     border-radius:999px;
 }
@@ -585,6 +598,28 @@ button[data-baseweb="tab"][aria-selected="true"]{
 ::-webkit-scrollbar-thumb:hover{
 
     background:#FF7A00;
+}
+
+/* ================================================= */
+/* TABLE */
+/* ================================================= */
+
+table{
+
+    color:#1F1F1F !important;
+}
+
+/* ================================================= */
+/* EXPANDER */
+/* ================================================= */
+
+.streamlit-expanderHeader{
+
+    background:#FFF7EF !important;
+
+    border-radius:14px !important;
+
+    border:1px solid #FFD9B0 !important;
 }
 
 /* ================================================= */

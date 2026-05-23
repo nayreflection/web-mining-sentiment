@@ -441,32 +441,40 @@ if "Dashboard" in page:
     col1, col2, col3 = st.columns(3)
 
     channels = [
-        (
-            "TVONE",
-            "#E63946",
-            "https://youtu.be/qHr-ky9Iwik?si=n_8RgtEXaNOuyo-R"
-        ),
-    
-        (
-            "KOMPAS",
-            "#2196F3",
-            "https://www.youtube.com/watch?v=-lvgdiR6z1g"
-        ),
-    
-        (
-            "METROTV",
-            "#4CAF50",
-            "https://youtu.be/5EHTgRAyyMw?si=bTVzlnY3NgC9Q8Y-"
-        ),
+    ("TVONE", "#E63946", "https://youtu.be/qHr-ky9Iwik?si=n_8RgtEXaNOuyo-R"),
+    ("KOMPAS", "#2196F3", "https://www.youtube.com/watch?v=-lvgdiR6z1g"),
+    ("METROTV", "#4CAF50", "https://youtu.be/5EHTgRAyyMw?si=bTVzlnY3NgC9Q8Y-"),
     ]
     
     for col, (name, color, url) in zip([col1, col2, col3], channels):
         with col:
             st.markdown(f"""
-            <div class="metric-card" style="border-left: 3px solid {color};">
-                <span class="channel-tag {tag_cls}">{name}</span>
-                <div style="color:#888; margin: 10px 0 4px; font-family:monospace; font-size:12px;">{vid_id}</div>
-            </div>""", unsafe_allow_html=True)
+            <div class="metric-card"
+                 onclick="window.open('{url}')"
+                 style="
+                    border-left: 3px solid {color};
+                    cursor:pointer;
+                 ">
+    
+                <span style="
+                    font-size:20px;
+                    font-weight:700;
+                    color:white;
+                ">
+                    {name}
+                </span>
+    
+                <div style="
+                    color:#888;
+                    margin: 10px 0 4px;
+                    font-family:monospace;
+                    font-size:12px;
+                ">
+                    Klik untuk membuka video YouTube
+                </div>
+    
+            </div>
+            """, unsafe_allow_html=True)
 
     st.markdown('<br>', unsafe_allow_html=True)
 

@@ -20,6 +20,7 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Manrope:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
 
 :root {
     --bg: #0D0D0E;
@@ -56,7 +57,14 @@ i[class*="material-icons"] {
     font-weight: normal !important;
     display: inline-block !important;
 }
-
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-size: 24px !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+}
 /* ===== HEADING ===== */
 .hero-title,
 .section-title,

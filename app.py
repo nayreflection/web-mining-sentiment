@@ -460,7 +460,7 @@ if "Dashboard" in page:
         ),
     ]
     
-    for col, (name, color, tag_cls, vid_id) in zip([col1, col2, col3], channels):
+    for col, (name, color, url) in zip([col1, col2, col3], channels):
         with col:
             st.markdown(f"""
             <div class="metric-card" style="border-left: 3px solid {color};">

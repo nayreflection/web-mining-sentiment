@@ -3,11 +3,8 @@ import pandas as pd
 import numpy as np
 import re
 import io
-import time
 import warnings
 warnings.filterwarnings('ignore')
-
-from collections import Counter
 
 # =========================================================
 # PAGE CONFIG
@@ -21,6 +18,13 @@ st.set_page_config(
 )
 
 # =========================================================
+# SESSION STATE
+# =========================================================
+
+if 'text' not in st.session_state:
+    st.session_state.text = ""
+
+# =========================================================
 # CUSTOM CSS
 # =========================================================
 
@@ -30,27 +34,17 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root{
-
     --primary:#FF7A00;
     --primary-soft:#FFA64D;
-
     --bg:#FFFDFB;
     --surface:#FFFFFF;
-
     --text:#1E1E1E;
     --muted:#737373;
-
     --border:#EFEFEF;
-
     --positive:#16A34A;
     --neutral:#D97706;
     --negative:#DC2626;
-
 }
-
-/* ================================================= */
-/* BASE */
-/* ================================================= */
 
 html, body, .stApp{
     background:var(--bg);
@@ -58,19 +52,9 @@ html, body, .stApp{
     font-family:'Plus Jakarta Sans', sans-serif;
 }
 
-/* ================================================= */
-/* SIDEBAR */
-/* ================================================= */
-
 section[data-testid="stSidebar"]{
-    background:linear-gradient(
-        180deg,
-        #FFF6EC 0%,
-        #FFFFFF 100%
-    ) !important;
-
+    background:linear-gradient(180deg,#FFF6EC 0%,#FFFFFF 100%) !important;
     border-right:1px solid var(--border);
-
     min-width:280px !important;
     max-width:280px !important;
 }
@@ -80,43 +64,38 @@ section[data-testid="stSidebar"] *{
     font-family:'Plus Jakarta Sans', sans-serif !important;
 }
 
-/* ================================================= */
-/* HIDE */
-/* ================================================= */
-
-#MainMenu{
+#MainMenu, footer{
     visibility:hidden;
 }
-
-footer{
-    visibility:hidden;
-}
-
-/* ================================================= */
-/* HERO */
-/* ================================================= */
 
 .hero{
     padding:42px;
     border-radius:30px;
-
-    background:linear-gradient(
-        135deg,
-        #FF7A00 0%,
-        #FFA64D 100%
-    );
-
+    background:linear-gradient(135deg,#FF7A00 0%,#FFA64D 100%);
     color:white;
-
     margin-bottom:28px;
-
     box-shadow:0 14px 30px rgba(255,122,0,0.18);
+    position:relative;
+    overflow:hidden;
+}
+
+.hero::before{
+    content:'';
+    position:absolute;
+    width:260px;
+    height:260px;
+    background:rgba(255,255,255,0.15);
+    border-radius:50%;
+    top:-90px;
+    right:-60px;
 }
 
 .hero-title{
     font-size:52px;
     font-weight:800;
     line-height:1.1;
+    position:relative;
+    z-index:2;
 }
 
 .hero-sub{
@@ -124,34 +103,24 @@ footer{
     font-size:16px;
     line-height:1.8;
     opacity:0.95;
+    position:relative;
+    z-index:2;
 }
-
-/* ================================================= */
-/* CARD */
-/* ================================================= */
 
 .card{
     background:white;
-
     border:1px solid var(--border);
-
     padding:24px;
-
     border-radius:24px;
-
     box-shadow:0 5px 16px rgba(0,0,0,0.04);
-
     transition:0.25s;
+    backdrop-filter:blur(10px);
 }
 
 .card:hover{
     transform:translateY(-4px);
     box-shadow:0 10px 28px rgba(0,0,0,0.08);
 }
-
-/* ================================================= */
-/* METRIC */
-/* ================================================= */
 
 .metric-number{
     font-size:42px;
@@ -165,10 +134,6 @@ footer{
     margin-top:4px;
 }
 
-/* ================================================= */
-/* SECTION */
-/* ================================================= */
-
 .section-title{
     font-size:30px;
     font-weight:800;
@@ -176,29 +141,13 @@ footer{
     margin-top:8px;
 }
 
-/* ================================================= */
-/* BUTTON */
-/* ================================================= */
-
 .stButton > button{
-
-    background:linear-gradient(
-        135deg,
-        #FF7A00 0%,
-        #FFA64D 100%
-    ) !important;
-
+    background:linear-gradient(135deg,#FF7A00 0%,#FFA64D 100%) !important;
     color:white !important;
-
     border:none !important;
-
     border-radius:14px !important;
-
     padding:12px 18px !important;
-
     font-weight:700 !important;
-
-    transition:0.25s !important;
 }
 
 .stButton > button:hover{
@@ -206,28 +155,11 @@ footer{
     box-shadow:0 10px 20px rgba(255,122,0,0.22);
 }
 
-/* ================================================= */
-/* INPUT */
-/* ================================================= */
-
 .stTextArea textarea{
     border-radius:18px !important;
     border:1px solid #ECECEC !important;
     padding:16px !important;
 }
-
-.stTextInput input{
-    border-radius:14px !important;
-}
-
-.stTextArea textarea:focus{
-    border:1px solid #FF7A00 !important;
-    box-shadow:0 0 0 2px rgba(255,122,0,0.12) !important;
-}
-
-/* ================================================= */
-/* TABS */
-/* ================================================= */
 
 button[data-baseweb="tab"]{
     font-weight:700 !important;
@@ -238,20 +170,6 @@ button[data-baseweb="tab"][aria-selected="true"]{
     color:#FF7A00 !important;
     border-bottom:3px solid #FF7A00 !important;
 }
-
-/* ================================================= */
-/* DATAFRAME */
-/* ================================================= */
-
-[data-testid="stDataFrame"]{
-    border-radius:20px;
-    overflow:hidden;
-    border:1px solid #F0F0F0;
-}
-
-/* ================================================= */
-/* BADGE */
-/* ================================================= */
 
 .badge{
     padding:6px 16px;
@@ -275,78 +193,83 @@ button[data-baseweb="tab"][aria-selected="true"]{
     color:#B91C1C;
 }
 
-/* ================================================= */
-/* PROGRESS */
-/* ================================================= */
-
 .stProgress > div > div > div{
     background:#FF7A00 !important;
-}
-
-/* ================================================= */
-/* FILE UPLOADER */
-/* ================================================= */
-
-[data-testid="stFileUploader"]{
-    border-radius:18px;
-    border:2px dashed #FFD0A1;
-    background:#FFF9F3;
-}
-
-/* ================================================= */
-/* INFO BOX */
-/* ================================================= */
-
-.info-box{
-    background:#FFF4E7;
-    border:1px solid #FFD7AA;
-    padding:18px;
-    border-radius:18px;
-    color:#9A5C00;
-    margin-bottom:22px;
-}
-
-/* ================================================= */
-/* HR */
-/* ================================================= */
-
-hr{
-    border:none;
-    border-top:1px solid #F1F1F1;
-    margin:20px 0;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
-# NLP
+# NLP LOADER
 # =========================================================
 
-@st.cache_resource
-def load_nlp():
+@st.cache_resource(show_spinner=False)
+def load_roberta():
 
-    import nltk
+    from transformers import pipeline
 
-    nltk.download('punkt')
-    nltk.download('stopwords')
+    model_name = "w11wo/indonesian-roberta-base-sentiment-classifier"
 
-    from nltk.corpus import stopwords
+    clf = pipeline(
+        "text-classification",
+        model=model_name,
+        tokenizer=model_name,
+        truncation=True,
+        max_length=512,
+        device=-1
+    )
 
-    return stopwords.words('indonesian')
+    return clf
+
+
+@st.cache_resource(show_spinner=False)
+def load_indobert():
+
+    from transformers import pipeline
+
+    model_name = "mdhugol/indonesia-bert-sentiment-classification"
+
+    clf = pipeline(
+        "text-classification",
+        model=model_name,
+        tokenizer=model_name,
+        truncation=True,
+        max_length=512,
+        device=-1
+    )
+
+    return clf
 
 # =========================================================
-# CLEANING
+# LABEL MAPPING
+# =========================================================
+
+LABEL_MAP_ROBERTA = {
+    'positive':'Positive',
+    'negative':'Negative',
+    'neutral':'Neutral',
+    'POSITIVE':'Positive',
+    'NEGATIVE':'Negative',
+    'NEUTRAL':'Neutral'
+}
+
+LABEL_MAP_INDOBERT = {
+    'LABEL_0':'Positive',
+    'LABEL_1':'Neutral',
+    'LABEL_2':'Negative'
+}
+
+# =========================================================
+# PREPROCESSING
 # =========================================================
 
 SLANG = {
-
     "gk":"tidak",
     "ga":"tidak",
     "gak":"tidak",
     "nggak":"tidak",
     "bgt":"banget",
-    "bangettt":"banget",
     "klo":"kalau",
     "krn":"karena",
     "yg":"yang",
@@ -358,8 +281,8 @@ SLANG = {
     "jd":"jadi",
     "gw":"saya",
     "gue":"saya"
-
 }
+
 
 def clean_text(text):
 
@@ -368,12 +291,11 @@ def clean_text(text):
     text = re.sub(r"http\S+", "", text)
     text = re.sub(r"@\w+", "", text)
     text = re.sub(r"#\w+", "", text)
-
     text = re.sub(r"[^a-zA-Z\s]", " ", text)
-
     text = re.sub(r"\s+", " ", text)
 
     return text.strip()
+
 
 def normalize(text):
 
@@ -383,56 +305,50 @@ def normalize(text):
 
     return " ".join(normalized)
 
+
 def preprocess(text):
 
     text = clean_text(text)
-
     text = normalize(text)
 
     return text
 
 # =========================================================
-# DUMMY SENTIMENT
+# SENTIMENT PREDICTION
 # =========================================================
 
-def predict_sentiment(text):
+
+def predict_sentiment(text, model_choice):
 
     text = preprocess(text)
 
-    negative_words = [
-        "buruk",
-        "parah",
-        "sedih",
-        "gagal",
-        "marah",
-        "jelek",
-        "lambat"
-    ]
+    if model_choice == "RoBERTa":
 
-    positive_words = [
-        "bagus",
-        "baik",
-        "hebat",
-        "cepat",
-        "mantap",
-        "terima kasih"
-    ]
+        clf = load_roberta()
 
-    neg = sum([1 for w in negative_words if w in text])
+        result = clf(text)[0]
 
-    pos = sum([1 for w in positive_words if w in text])
+        sentiment = LABEL_MAP_ROBERTA.get(
+            result['label'],
+            result['label']
+        )
 
-    if neg > pos:
-
-        return "Negative", np.random.uniform(0.85,0.99)
-
-    elif pos > neg:
-
-        return "Positive", np.random.uniform(0.85,0.99)
+        score = result['score']
 
     else:
 
-        return "Neutral", np.random.uniform(0.70,0.90)
+        clf = load_indobert()
+
+        result = clf(text)[0]
+
+        sentiment = LABEL_MAP_INDOBERT.get(
+            result['label'],
+            result['label']
+        )
+
+        score = result['score']
+
+    return sentiment, score
 
 # =========================================================
 # SIDEBAR
@@ -441,25 +357,13 @@ def predict_sentiment(text):
 with st.sidebar:
 
     st.markdown("""
-    <div style="
-        padding-top:10px;
-        padding-bottom:20px;
-    ">
+    <div style="padding-top:10px;padding-bottom:20px;">
 
-    <div style="
-        font-size:32px;
-        font-weight:800;
-        color:#FF7A00;
-    ">
+    <div style="font-size:32px;font-weight:800;color:#FF7A00;">
         🚄 Agro Bromo
     </div>
 
-    <div style="
-        color:#666;
-        font-size:13px;
-        line-height:1.7;
-        margin-top:8px;
-    ">
+    <div style="color:#666;font-size:13px;line-height:1.7;margin-top:8px;">
         Web Mining & Sentiment Analysis Dashboard
     </div>
 
@@ -467,43 +371,26 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     menu = st.radio(
-
         "Navigation",
-
         [
-
             "🏠 Dashboard",
             "🧠 Analisis Sentimen",
             "📊 Statistik & EDA",
-            "☁️ WordCloud",
             "📁 Batch Prediction",
-            "📈 Machine Learning",
             "📌 Tentang"
-
         ]
-
     )
 
     st.markdown("---")
 
     model_choice = st.selectbox(
-
         "Model",
-
-        [
-
-            "RoBERTa",
-            "IndoBERT"
-
-        ]
-
+        ["RoBERTa", "IndoBERT"]
     )
 
     preprocessing = st.toggle(
-
         "Show Preprocessing",
         value=False
-
     )
 
 # =========================================================
@@ -526,100 +413,53 @@ if menu == "🏠 Dashboard":
     </div>
     """, unsafe_allow_html=True)
 
-    # =====================================================
-    # METRICS
-    # =====================================================
-
     c1,c2,c3,c4 = st.columns(4)
 
     with c1:
-
         st.markdown("""
         <div class="card">
-
-            <div class="metric-number">
-                3
-            </div>
-
-            <div class="metric-label">
-                Channel YouTube
-            </div>
-
+            <div class="metric-number">3</div>
+            <div class="metric-label">Channel YouTube</div>
         </div>
         """, unsafe_allow_html=True)
 
     with c2:
-
         st.markdown("""
         <div class="card">
-
-            <div class="metric-number">
-                2
-            </div>
-
-            <div class="metric-label">
-                Transformer Models
-            </div>
-
+            <div class="metric-number">2</div>
+            <div class="metric-label">Transformer Models</div>
         </div>
         """, unsafe_allow_html=True)
 
     with c3:
-
         st.markdown("""
         <div class="card">
-
-            <div class="metric-number">
-                RF
-            </div>
-
-            <div class="metric-label">
-                Random Forest
-            </div>
-
+            <div class="metric-number">RF</div>
+            <div class="metric-label">Random Forest</div>
         </div>
         """, unsafe_allow_html=True)
 
     with c4:
-
         st.markdown("""
         <div class="card">
-
-            <div class="metric-number">
-                XGB
-            </div>
-
-            <div class="metric-label">
-                XGBoost
-            </div>
-
+            <div class="metric-number">XGB</div>
+            <div class="metric-label">XGBoost</div>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # =====================================================
-    # PIPELINE
-    # =====================================================
-
-    st.markdown(
-
-        '<div class="section-title">📌 Pipeline Penelitian</div>',
-        unsafe_allow_html=True
-
-    )
+    st.markdown('<div class="section-title">📌 Pipeline Penelitian</div>', unsafe_allow_html=True)
 
     p1,p2,p3,p4,p5,p6 = st.columns(6)
 
     pipeline = [
-
         ("📥","Web Crawling"),
         ("🧹","Preprocessing"),
         ("🧠","Transformer"),
         ("📊","EDA"),
         ("🤖","Machine Learning"),
         ("📈","Insight")
-
     ]
 
     cols = [p1,p2,p3,p4,p5,p6]
@@ -630,42 +470,21 @@ if menu == "🏠 Dashboard":
 
             st.markdown(f"""
             <div class="card" style="text-align:center;">
-
-                <div style="font-size:42px;">
-                    {item[0]}
-                </div>
-
-                <div style="
-                    margin-top:10px;
-                    font-weight:700;
-                ">
-                    {item[1]}
-                </div>
-
+                <div style="font-size:42px;">{item[0]}</div>
+                <div style="margin-top:10px;font-weight:700;">{item[1]}</div>
             </div>
             """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # =====================================================
-    # CHANNELS
-    # =====================================================
-
-    st.markdown(
-
-        '<div class="section-title">📺 Sumber Dataset</div>',
-        unsafe_allow_html=True
-
-    )
+    st.markdown('<div class="section-title">📺 Sumber Dataset</div>', unsafe_allow_html=True)
 
     a,b,c = st.columns(3)
 
     channels = [
-
-        ("🔴 TVONE"),
-        ("🔵 KOMPAS TV"),
-        ("🟢 METRO TV")
-
+        "🔴 TVONE",
+        "🔵 KOMPAS TV",
+        "🟢 METRO TV"
     ]
 
     for col, name in zip([a,b,c], channels):
@@ -674,22 +493,10 @@ if menu == "🏠 Dashboard":
 
             st.markdown(f"""
             <div class="card">
-
-                <div style="
-                    font-size:22px;
-                    font-weight:800;
-                ">
-                    {name}
-                </div>
-
-                <div style="
-                    color:#666;
-                    line-height:1.8;
-                    margin-top:12px;
-                ">
+                <div style="font-size:22px;font-weight:800;">{name}</div>
+                <div style="color:#666;line-height:1.8;margin-top:12px;">
                     Data komentar YouTube digunakan sebagai sumber utama untuk analisis sentimen publik.
                 </div>
-
             </div>
             """, unsafe_allow_html=True)
 
@@ -701,54 +508,37 @@ elif menu == "🧠 Analisis Sentimen":
 
     st.markdown("""
     <div class="hero">
-
-        <div class="hero-title">
-            Analisis Sentimen
-        </div>
-
+        <div class="hero-title">Analisis Sentimen</div>
         <div class="hero-sub">
             Analisis komentar YouTube secara real-time menggunakan NLP.
         </div>
-
     </div>
     """, unsafe_allow_html=True)
 
     ex1,ex2,ex3 = st.columns(3)
 
     with ex1:
-
         if st.button("😔 Contoh Negatif"):
-
             st.session_state.text = "pelayanan sangat buruk dan lambat"
 
     with ex2:
-
         if st.button("😐 Contoh Netral"):
-
             st.session_state.text = "kereta mengalami gangguan teknis"
 
     with ex3:
-
         if st.button("😊 Contoh Positif"):
-
             st.session_state.text = "terima kasih tim penyelamat"
 
     text = st.text_area(
-
         "Input Text",
-
         value=st.session_state.get("text",""),
-
         height=180,
-
         placeholder="Masukkan komentar YouTube di sini..."
-
     )
 
     if preprocessing and text:
 
         st.markdown("### 🔧 Hasil Preprocessing")
-
         st.code(preprocess(text))
 
     if st.button("🚀 Jalankan Analisis", use_container_width=True):
@@ -759,38 +549,33 @@ elif menu == "🧠 Analisis Sentimen":
 
         else:
 
-            sentiment, score = predict_sentiment(text)
+            with st.spinner("Menganalisis sentimen..."):
+
+                sentiment, score = predict_sentiment(
+                    text,
+                    model_choice
+                )
 
             if sentiment == "Positive":
-
                 badge = "badge-positive"
                 emoji = "😊"
 
             elif sentiment == "Neutral":
-
                 badge = "badge-neutral"
                 emoji = "😐"
 
             else:
-
                 badge = "badge-negative"
                 emoji = "😔"
 
             st.markdown(f"""
             <div class="card">
 
-                <div style="
-                    font-size:24px;
-                    font-weight:800;
-                    margin-bottom:20px;
-                ">
+                <div style="font-size:24px;font-weight:800;margin-bottom:20px;">
                     Hasil Prediksi
                 </div>
 
-                <div style="
-                    text-align:center;
-                    font-size:82px;
-                ">
+                <div style="text-align:center;font-size:82px;">
                     {emoji}
                 </div>
 
@@ -800,22 +585,157 @@ elif menu == "🧠 Analisis Sentimen":
                     </span>
                 </div>
 
-                <div style="
-                    text-align:center;
-                    margin-top:18px;
-                    color:#666;
-                ">
+                <div style="text-align:center;margin-top:18px;color:#666;">
                     Confidence Score
                 </div>
 
-                <div style="
-                    text-align:center;
-                    font-size:44px;
-                    font-weight:800;
-                    color:#FF7A00;
-                ">
+                <div style="text-align:center;font-size:44px;font-weight:800;color:#FF7A00;">
                     {score*100:.2f}%
                 </div>
 
             </div>
             """, unsafe_allow_html=True)
+
+# =========================================================
+# STATISTIK
+# =========================================================
+
+elif menu == "📊 Statistik & EDA":
+
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-title">Statistik & EDA</div>
+        <div class="hero-sub">
+            Visualisasi distribusi sentimen komentar YouTube.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    uploaded = st.file_uploader(
+        "Upload CSV",
+        type=['csv']
+    )
+
+    if uploaded:
+
+        df = pd.read_csv(io.BytesIO(uploaded.getvalue()))
+
+        st.success(f"Dataset berhasil dimuat: {len(df)} baris")
+
+        st.dataframe(df.head(), use_container_width=True)
+
+    else:
+
+        st.info("Upload CSV hasil crawling untuk melihat statistik.")
+
+# =========================================================
+# BATCH PREDICTION
+# =========================================================
+
+elif menu == "📁 Batch Prediction":
+
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-title">Batch Prediction</div>
+        <div class="hero-sub">
+            Prediksi sentimen banyak komentar sekaligus.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    bulk_text = st.text_area(
+        "Masukkan komentar",
+        height=200,
+        placeholder="Komentar 1...\nKomentar 2..."
+    )
+
+    if st.button("Jalankan Batch"):
+
+        lines = [
+            x.strip()
+            for x in bulk_text.split('\n')
+            if x.strip()
+        ]
+
+        results = []
+
+        prog = st.progress(0)
+
+        for i, line in enumerate(lines):
+
+            sentiment, score = predict_sentiment(
+                line,
+                model_choice
+            )
+
+            results.append({
+                'Komentar':line,
+                'Sentiment':sentiment,
+                'Score':f'{score*100:.2f}%'
+            })
+
+            prog.progress((i+1)/len(lines))
+
+        df_result = pd.DataFrame(results)
+
+        st.dataframe(df_result, use_container_width=True)
+
+        csv = df_result.to_csv(index=False)
+
+        st.download_button(
+            "Download CSV",
+            csv,
+            file_name="hasil_sentimen.csv",
+            mime="text/csv"
+        )
+
+# =========================================================
+# ABOUT
+# =========================================================
+
+elif menu == "📌 Tentang":
+
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-title">Tentang Proyek</div>
+        <div class="hero-sub">
+            Implementasi web mining dan sentiment analysis komentar YouTube.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="card">
+
+    <h3>📚 Deskripsi</h3>
+
+    <p style="line-height:1.8;color:#666;">
+    Proyek ini menggunakan NLP, IndoBERT, dan RoBERTa untuk
+    menganalisis sentimen komentar YouTube terkait kecelakaan
+    Kereta Api Argo Bromo.
+    </p>
+
+    <h3>🛠 Tools</h3>
+
+    <ul>
+        <li>Streamlit</li>
+        <li>Transformers</li>
+        <li>IndoBERT</li>
+        <li>RoBERTa</li>
+        <li>Pandas</li>
+        <li>Scikit-learn</li>
+        <li>XGBoost</li>
+    </ul>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.code("""
+pip install streamlit
+pip install transformers
+pip install torch
+pip install pandas
+pip install numpy
+pip install scikit-learn
+pip install xgboost
+""", language='bash')

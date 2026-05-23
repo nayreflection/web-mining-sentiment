@@ -613,6 +613,7 @@ button[data-baseweb="tab"][aria-selected="true"]{
 }
 
 </style>
+""", unsafe_allow_html=True)
 
 # ── NLP Setup ────────────────────────────────────────────────
 @st.cache_resource(show_spinner=False)

@@ -2,12 +2,14 @@ streamlit
 pandas
 numpy
 nltk
-sastrawi
+Sastrawi
 transformers
 torch
 matplotlib
 scikit-learn
-xgboost
+xgboost==2.0.3
 gensim
 wordcloud
 google-api-python-client
+sentencepiece
+protobuf

@@ -1,0 +1,13 @@
+streamlit
+pandas
+numpy
+nltk
+sastrawi
+transformers
+torch
+matplotlib
+scikit-learn
+xgboost
+gensim
+wordcloud
+google-api-python-client

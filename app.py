@@ -475,52 +475,236 @@ def clean_text(text):
     return text
 
 def normalize_slang(text):
-    return ' '.join(SLANG_DICT.get(w, w) for w in text.split())
+    return ' '.join(
+        SLANG_DICT.get(w, w)
+        for w in text.split()
+    )
+
+
+# Load NLP
+word_tokenize, stopwords = load_nlp()
+
+# Stopwords Indonesia
+indonesia_sw = stopwords.words('indonesian')
+
+# Pertahankan kata negasi
+stop_words = set(indonesia_sw) - {
+    'tidak',
+    'bukan',
+    'kurang',
+    'tak'
+}
+
+# Custom stopwords
+CUSTOM_SW = {
+    'innalillahi','wainnailaihirojiun','rojiun',
+    'moga','semoga','aamiin','amiin',
+    'alfatihah','allahuakbar','subhanallah',
+    'allahumma','doa','doakan','almarhum',
+    'surga','wa','yaa','si','pak','bu',
+    'bang','kak','mas','mbak','nih',
+    'sih','lah','dong','deh','tuh','kok',
+}
+
+stop_words |= CUSTOM_SW
+
+# Stemmer
+stemmer = load_stemmer()
+
 
 def preprocess(text):
-    cleaned = clean_text(text)
-    normalized = normalize_slang(cleaned)
-    return normalized
+
+    # clean text
+    clean = clean_text(text)
+
+    # normalize slang
+    normalized = normalize_slang(clean)
+
+    # tokenisasi
+    tokens_word = word_tokenize(normalized)
+
+    # remove stopwords
+    tokens_no_stop = [
+        w for w in tokens_word
+        if w not in stop_words
+        and len(w) > 2
+        and w.isalpha()
+    ]
+
+    # stemming
+    tokens_stem = [
+        stemmer.stem(w)
+        for w in tokens_no_stop
+    ]
+
+    # final text
+    final_text = ' '.join(tokens_stem)
+
+    return {
+        'clean_text': clean,
+        'normalized_text': normalized,
+        'tokens_word': tokens_word,
+        'tokens_no_stop': tokens_no_stop,
+        'tokens_stem': tokens_stem,
+        'final_text': final_text
+    }
+
 
 def analyze_sentiment(text, model_name, clf_roberta, clf_indobert):
-    processed = preprocess(text)
+
+    # preprocessing
+    prep = preprocess(text)
+
+    # text final hasil preprocessing
+    processed = prep['final_text']
+
+    # fallback jika kosong
     if not processed.strip():
-        return {'label': 'neutral', 'score': 1.0, 'scores': {'positive': 0.0, 'neutral': 1.0, 'negative': 0.0}}
+
+        return {
+            'label': 'neutral',
+            'score': 1.0,
+            'scores': {
+                'positive': 0.0,
+                'neutral': 1.0,
+                'negative': 0.0
+            },
+            **prep
+        }
 
     try:
+
+        # ── RoBERTa ─────────────────────
         if model_name == "RoBERTa":
+
             result = clf_roberta(processed[:512])[0]
-            label = LABEL_MAP_ROBERTA.get(result['label'], result['label'])
+
+            label = LABEL_MAP_ROBERTA.get(
+                result['label'],
+                result['label']
+            )
+
             score = result['score']
 
-            # Get all scores
-            all_results = clf_roberta(processed[:512], top_k=None) if hasattr(clf_roberta, '__call__') else [result]
+            # ambil semua score
+            all_results = clf_roberta(
+                processed[:512],
+                top_k=None
+            )
+
             scores = {}
-            if isinstance(all_results, list) and len(all_results) > 1:
+
+            if isinstance(all_results, list):
+
                 for r in all_results:
-                    mapped = LABEL_MAP_ROBERTA.get(r['label'], r['label'])
+
+                    mapped = LABEL_MAP_ROBERTA.get(
+                        r['label'],
+                        r['label']
+                    )
+
                     scores[mapped] = r.get('score', 0.0)
+
             else:
-                scores = {label: score, **{k: (1-score)/2 for k in ['positive','neutral','negative'] if k != label}}
 
-        else:  # IndoBERT
+                scores = {
+                    label: score,
+                    **{
+                        k: (1-score)/2
+                        for k in [
+                            'positive',
+                            'neutral',
+                            'negative'
+                        ]
+                        if k != label
+                    }
+                }
+
+        # ── IndoBERT ────────────────────
+        else:
+
             result = clf_indobert(processed[:512])[0]
-            label = LABEL_MAP_INDOBERT.get(result['label'], result['label'])
+
+            label = LABEL_MAP_INDOBERT.get(
+                result['label'],
+                result['label']
+            )
+
             score = result['score']
-            scores = {label: score, **{k: (1-score)/2 for k in ['positive','neutral','negative'] if k != label}}
 
-        # Normalize scores
+            scores = {
+                label: score,
+                **{
+                    k: (1-score)/2
+                    for k in [
+                        'positive',
+                        'neutral',
+                        'negative'
+                    ]
+                    if k != label
+                }
+            }
+
+        # normalize score
         total = sum(scores.values())
-        if total > 0:
-            scores = {k: v/total for k,v in scores.items()}
 
-        for key in ['positive','neutral','negative']:
+        if total > 0:
+
+            scores = {
+                k: v / total
+                for k, v in scores.items()
+            }
+
+        # pastikan semua label ada
+        for key in ['positive', 'neutral', 'negative']:
             scores.setdefault(key, 0.0)
 
-        return {'label': label, 'score': score, 'scores': scores}
+        # feature engineering
+        char_length = len(str(text))
+
+        word_count = len(prep['tokens_no_stop'])
+
+        has_emoji = int(
+            bool(
+                re.search(r'[^\x00-\x7F]', str(text))
+            )
+        )
+
+        # return hasil lengkap
+        return {
+
+            # hasil sentimen
+            'label': label,
+            'score': score,
+            'scores': scores,
+
+            # preprocessing
+            'clean_text': prep['clean_text'],
+            'normalized_text': prep['normalized_text'],
+            'tokens_word': prep['tokens_word'],
+            'tokens_no_stop': prep['tokens_no_stop'],
+            'tokens_stem': prep['tokens_stem'],
+            'final_text': prep['final_text'],
+
+            # fitur tambahan
+            'char_length': char_length,
+            'word_count': word_count,
+            'has_emoji': has_emoji
+        }
 
     except Exception as e:
-        return {'label': 'neutral', 'score': 1.0, 'scores': {'positive': 0.0, 'neutral': 1.0, 'negative': 0.0}, 'error': str(e)}
+
+        return {
+            'label': 'neutral',
+            'score': 1.0,
+            'scores': {
+                'positive': 0.0,
+                'neutral': 1.0,
+                'negative': 0.0
+            },
+            'error': str(e),
+            **prep
+        }
 
 
 # ── Sidebar ──────────────────────────────────────────────────

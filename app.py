@@ -876,84 +876,83 @@ elif "Analisis Sentimen" in page:
         analyze_btn = st.button("Analisis →", use_container_width=True)
 
     # Show preprocessing
-if show_preprocessing and user_input:
-
-    prep = preprocess(user_input)
-
-    with st.expander("🔧 Hasil Preprocessing"):
-
-        st.markdown("""
-        <div style="
-            font-size:12px;
-            color:#888;
-            margin-bottom:18px;
-            text-transform:uppercase;
-            letter-spacing:0.08em;
-        ">
-        Tahapan preprocessing NLP
-        </div>
-        """, unsafe_allow_html=True)
-
-        # ROW 1
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("### 🧹 Clean Text")
-            st.code(prep['clean_text'], language=None)
-
-        with col2:
-            st.markdown("### 🔄 Normalized Text")
-            st.code(prep['normalized_text'], language=None)
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # ROW 2
-        col3, col4 = st.columns(2)
-
-        with col3:
-            st.markdown("### ✂️ Tokenized")
-            st.code(prep['tokens_word'], language=None)
-
-        with col4:
-            st.markdown("### 🚫 Remove Stopwords")
-            st.code(prep['tokens_no_stop'], language=None)
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # ROW 3
-        col5, col6 = st.columns(2)
-
-        with col5:
-            st.markdown("### 🌱 Stemming")
-            st.code(prep['tokens_stem'], language=None)
-
-        with col6:
-            st.markdown("### ✅ Final Text")
-            st.code(prep['final_text'], language=None)
-
-        # Statistik tambahan
-        st.markdown("<hr>", unsafe_allow_html=True)
-
-        s1, s2, s3 = st.columns(3)
-
-        with s1:
-            st.metric(
-                "Jumlah Token",
-                len(prep['tokens_word'])
-            )
-
-        with s2:
-            st.metric(
-                "Setelah Stopword",
-                len(prep['tokens_no_stop'])
-            )
-
-        with s3:
-            st.metric(
-                "Panjang Final Text",
-                len(prep['final_text'].split())
-            )
-
+    if show_preprocessing and user_input:
+    
+        prep = preprocess(user_input)
+    
+        with st.expander("🔧 Hasil Preprocessing"):
+    
+            st.markdown("""
+            <div style="
+                font-size:12px;
+                color:#888;
+                margin-bottom:18px;
+                text-transform:uppercase;
+                letter-spacing:0.08em;
+            ">
+            Tahapan preprocessing NLP
+            </div>
+            """, unsafe_allow_html=True)
+    
+            # ROW 1
+            col1, col2 = st.columns(2)
+    
+            with col1:
+                st.markdown("### 🧹 Clean Text")
+                st.code(prep['clean_text'], language=None)
+    
+            with col2:
+                st.markdown("### 🔄 Normalized Text")
+                st.code(prep['normalized_text'], language=None)
+    
+            st.markdown("<br>", unsafe_allow_html=True)
+    
+            # ROW 2
+            col3, col4 = st.columns(2)
+    
+            with col3:
+                st.markdown("### ✂️ Tokenized")
+                st.code(prep['tokens_word'], language=None)
+    
+            with col4:
+                st.markdown("### 🚫 Remove Stopwords")
+                st.code(prep['tokens_no_stop'], language=None)
+    
+            st.markdown("<br>", unsafe_allow_html=True)
+    
+            # ROW 3
+            col5, col6 = st.columns(2)
+    
+            with col5:
+                st.markdown("### 🌱 Stemming")
+                st.code(prep['tokens_stem'], language=None)
+    
+            with col6:
+                st.markdown("### ✅ Final Text")
+                st.code(prep['final_text'], language=None)
+    
+            # Statistik tambahan
+            st.markdown("<hr>", unsafe_allow_html=True)
+    
+            s1, s2, s3 = st.columns(3)
+    
+            with s1:
+                st.metric(
+                    "Jumlah Token",
+                    len(prep['tokens_word'])
+                )
+    
+            with s2:
+                st.metric(
+                    "Setelah Stopword",
+                    len(prep['tokens_no_stop'])
+                )
+    
+            with s3:
+                st.metric(
+                    "Panjang Final Text",
+                    len(prep['final_text'].split())
+                )
     # Analysis result
     if analyze_btn and user_input.strip():
         with st.spinner("Menganalisis sentimen..."):

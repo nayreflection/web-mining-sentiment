@@ -1,1 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
+:root{
+    --bg: #0F0F10;
+    --card: #18181B;
+    --border: #27272A;
+
+    --orange: #FF6B2C;
+    --orange-soft: #FF8A57;
+
+    --white: #F5F5F5;
+    --muted: #A1A1AA;
+}
+
+/* BASE */
+html, body, .stApp{
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* SIDEBAR */
+section[data-testid="stSidebar"]{
+    background: #141416;
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-title{
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--orange);
+    margin-bottom: 30px;
+}
+
+/* CARD */
+.metric-card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 18px;
+}
+
+/* TITLE */
+.hero-title{
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.hero-accent{
+    color: var(--orange);
+}
+
+.hero-sub{
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* BUTTON */
+.stButton button{
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+}
+
+.stButton button:hover{
+    background: var(--orange-soft);
+}
+
+/* INPUT */
+.stTextArea textarea{
+    background: #18181B !important;
+    color: white !important;
+    border: 1px solid var(--border) !important;
+}
+
+/* SECTION */
+.section-title{
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* HIDE STREAMLIT */
+#MainMenu, footer{
+    visibility: hidden;
+}

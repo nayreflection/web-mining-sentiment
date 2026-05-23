@@ -470,10 +470,6 @@ if "Dashboard" in page:
             st.markdown(f"""
                 <div class="metric-card" style="border-left: 3px solid {color};">
                     <span class="channel-tag {tag_cls}">{name}</span>
-        
-                    <div style="color:#888; margin:10px 0 4px; font-family:monospace; font-size:12px;">
-                        {vid_id}
-                    </div>
                 </div>
                 """, unsafe_allow_html=True)
             st.link_button(
